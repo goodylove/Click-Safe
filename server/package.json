@@ -10,12 +10,16 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@types/mailparser": "^3.4.6",
     "@types/node": "^24.10.0",
     "mastra": "^0.17.7",
     "typescript": "^5.9.3"
   },
   "dependencies": {
     "@mastra/core": "^0.23.3",
+    "@whoisjson/whoisjson": "^1.0.4",
+    "dotenv": "^17.2.3",
+    "mailparser": "^3.9.0",
     "zod": "^4.1.12"
   }
 }
