@@ -10,7 +10,9 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@types/compression": "^1.8.1",
     "@types/mailparser": "^3.4.6",
+    "@types/morgan": "^1.9.10",
     "@types/node": "^24.10.0",
     "mastra": "^0.17.7",
     "typescript": "^5.9.3"
@@ -18,8 +20,15 @@
   "dependencies": {
     "@mastra/core": "^0.23.3",
     "@whoisjson/whoisjson": "^1.0.4",
+    "axios": "^1.13.2",
+    "compression": "^1.8.1",
+    "cors": "^2.8.5",
     "dotenv": "^17.2.3",
+    "express-rate-limit": "^8.2.1",
+    "helmet": "^8.1.0",
     "mailparser": "^3.9.0",
+    "morgan": "^1.10.1",
+    "uuid": "^13.0.0",
     "zod": "^4.1.12"
   }
 }
