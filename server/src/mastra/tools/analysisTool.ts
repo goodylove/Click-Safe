@@ -1,3 +1,6 @@
+import { createTool } from "@mastra/core";
+import { whois } from "../../../config/config";
+import z from "zod";
 
 
 
@@ -5,7 +8,60 @@ interface AnalysisInterface {
     links: string[],
     sender: Record<string, string> | any,
     content: Record<string, string> | any
-} 
+}
+
+
+
+async function getDomainInfo(domain: string) {
+    try {
+
+        const domainParts = domain.split('.');
+        const mainDomain = domainParts.slice(-2).join('.'); // Get domain.com from sub.domain.com
+
+        const whoisInfo = await whois.lookup(mainDomain);
+
+        let ageDays = null;
+        let creationDate = null;
+
+        // Parse creation date from WHOIS (different formats)
+        if (whoisInfo.created) {
+            creationDate = whoisInfo.created;
+            const created = new Date(creationDate);
+
+            if (!isNaN(created.getTime())) {
+                ageDays = Math.floor(
+                    (Date.now() - created.getTime()) / (1000 * 60 * 60 * 24)
+                );
+            }
+        }
+
+        return {
+            domain: mainDomain,
+            registrar: whoisInfo.registrar || "Unknown",
+            creationDate: creationDate,
+            ageDays: ageDays,
+            ageCategory: getAgeCategory(ageDays),
+            expires: whoisInfo.expires || null,
+            updated: whoisInfo.changed || null,
+            nameServers: whoisInfo.nameserver || []
+        };
+    } catch (error) {
+        const message = error instanceof Error ? error.message : "something went wrong"
+        console.error("Domain lookup error for", domain, message,);
+        return null;
+    }
+}
+
+function getAgeCategory(ageDays: any) {
+    if (ageDays === null) return 'unknown';
+    if (ageDays < 30) return 'very_new';
+    if (ageDays < 90) return 'new';
+    if (ageDays < 365) return 'recent';
+    if (ageDays < 1825) return 'established'; // 5 years
+    return 'very_established'; // 5+ years
+}
+
+
 
 
 async function analyzeDomainReputation(domain: string) {
@@ -105,6 +161,8 @@ function analyzeUrlSafety(url: string) {
 
 // Content Heuristic Analysis
 function analyzeContentHeuristics(content: any) {
+    type PhishingCategory = keyof typeof phishingIndicators;
+
     const phishingIndicators = {
         urgency: [
             'urgent', 'immediately', 'right away', 'asap', 'within 24 hours',
@@ -124,10 +182,15 @@ function analyzeContentHeuristics(content: any) {
         ]
     };
 
-    const detectedPatterns = {};
+    const detectedPatterns: Record<PhishingCategory, string[]> = {
+        urgency: [],
+        threats: [],
+        rewards: [],
+        authority: [],
+    };
     let heuristicScore = 100;
 
-    Object.keys(phishingIndicators).forEach(category => {
+    (Object.keys(phishingIndicators) as PhishingCategory[]).forEach(category => {
         const matches = phishingIndicators[category].filter(indicator =>
             content.toLowerCase().includes(indicator.toLowerCase())
         );
@@ -181,19 +244,72 @@ async function analyzeSender(sender: Record<string, string>) {
 }
 
 // Main analysis function that combines all tools
-async function analyzeEmailSecurity(emailData: any) {
+// async function analysisTools(emailData: any) {
+//     console.log(emailData.content)
+//     const analysis: AnalysisInterface = {
+//         links: [],
+//         sender: {},
+//         content: {}
+//     };
+//     // Analyze links if present
+//     if (emailData.links && emailData.links.length > 0) {
+//         analysis.links = emailData.links.map(async (link: any) => {
+
+//             return {
+//                 ...link,
+//                 safetyAnalysis: analyzeUrlSafety(link.href),
+//                 domainAnalysis: await analyzeDomainReputation(new URL(link.href).hostname)
+//             }
+
+//         });
+//     }
+
+//     // Analyze sender if present
+//     if (emailData.metadata && emailData.metadata.sender) {
+//         analysis.sender = await analyzeSender(emailData.metadata.sender);
+//     }
+
+//     // Analyze content
+//     if (emailData.content) {
+//         analysis.content = analyzeContentHeuristics(emailData.content);
+//     }
+
+//     return analysis;
+// }
+
+// export const analysisTool = createTool({
+//     id: 'click-safe',
+//     description: 'Comprehensive email security analysis for phishing detection and link safety assessment',
+//     inputSchema: z.object({
+//         emailData: z.any(),
+//     }),
+//     outputSchema: z.any(),
+//     execute: async ({ context }) => {
+//         return await analysisTools(context.emailData);
+//     },
+// });
+
+// tools/analysisTool.ts
+async function analysisTools(emailData: any) {
+    console.log('📧 Email content:', emailData.content); // This should now work
     const analysis: AnalysisInterface = {
         links: [],
         sender: {},
         content: {}
     };
-    // Analyze links if present
+
+    // Analyze links if present - FIXED: Handle async properly
     if (emailData.links && emailData.links.length > 0) {
-        analysis.links = emailData.links.map(link => ({
-            ...link,
-            safetyAnalysis: analyzeUrlSafety(link.href),
-            domainAnalysis: analyzeDomainReputation(new URL(link.href).hostname)
-        }));
+        // Fix: Use Promise.all to handle async operations in map
+        analysis.links = await Promise.all(
+            emailData.links.map(async (link: any) => {
+                return {
+                    ...link,
+                    safetyAnalysis: analyzeUrlSafety(link.href),
+                    domainAnalysis: await analyzeDomainReputation(new URL(link.href).hostname)
+                };
+            })
+        );
     }
 
     // Analyze sender if present
@@ -209,10 +325,39 @@ async function analyzeEmailSecurity(emailData: any) {
     return analysis;
 }
 
-exports = {
-    analyzeDomainReputation,
-    analyzeUrlSafety,
-    analyzeContentHeuristics,
-    analyzeSender,
-    analyzeEmailSecurity
-};
+export const analysisTool = createTool({
+    id: 'click-safe',
+    description: 'Comprehensive email security analysis for phishing detection and link safety assessment',
+    inputSchema: z.object({
+        type: z.enum(["GMAIL_EMAIL", "OUTLOOK_EMAIL", "WEB_CONTENT", "HEURISTIC_CONTENT", "FALLBACK_CONTENT"]),
+        content: z.string(),
+        html: z.string().optional(),
+
+        links: z.array(z.object({
+            text: z.string(),
+            href: z.string(),
+            title: z.string().optional(),
+            isSuspicious: z.boolean().optional(),
+            riskFactors: z.array(z.string()).optional()
+        })),
+        metadata: z.object({
+            sender: z.object({
+                name: z.string(),
+                email: z.string(),
+                domain: z.string()
+            }),
+            subject: z.string(),
+
+
+        }).optional(),
+        url: z.string().optional(),
+        source: z.string().optional(),
+
+    }),
+    outputSchema: z.any(),
+    execute: async ({ context }) => {
+        // ✅ Now context IS the email data directly
+        console.log('🔍 Direct email content:', context.content);
+        return await analysisTools(context);
+    },
+});

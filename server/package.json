@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "tsx watch src/index.ts"
   },
   "keywords": [],
   "author": "",
@@ -15,10 +16,13 @@
     "@types/morgan": "^1.9.10",
     "@types/node": "^24.10.0",
     "mastra": "^0.17.7",
+    "tsx": "^4.20.6",
     "typescript": "^5.9.3"
   },
   "dependencies": {
     "@mastra/core": "^0.23.3",
+    "@mastra/libsql": "^0.16.2",
+    "@mastra/memory": "^0.15.11",
     "@whoisjson/whoisjson": "^1.0.4",
     "axios": "^1.13.2",
     "compression": "^1.8.1",

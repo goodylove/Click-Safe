@@ -49,3 +49,5 @@ function getAgeCategory(ageDays: any) {
     if (ageDays < 1825) return 'established'; // 5 years
     return 'very_established'; // 5+ years
 }
+
+export default getDomainInfo
