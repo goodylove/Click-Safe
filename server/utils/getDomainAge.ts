@@ -1,4 +1,4 @@
-import { whois } from "../config/config"
+import { whois } from "../src/config/config"
 
 
 async function getDomainInfo(domain: string) {

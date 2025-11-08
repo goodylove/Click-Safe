@@ -1,13 +1,10 @@
 import { Agent } from "@mastra/core/agent";
-
 import { Memory } from "@mastra/memory";
 import { LibSQLStore } from "@mastra/libsql";
 import { analysisTool } from "../tools/analysisTool.js";
-
-
 export const clickSafeAgent = new Agent({
-  name: "Click Safe Agent",
-  instructions: `
+    name: "Click Safe Agent",
+    instructions: `
 #  CLICK-SAFE EMAIL SECURITY ANALYST
 
 You are a specialized email security analyst that uses advanced tools to detect phishing attempts and malicious content. Your analysis focuses on three critical areas: links, sender credibility, and content patterns.
@@ -262,11 +259,11 @@ While the structure must be exact, update the specific values based on your actu
 
 Your response should start with { and end with } - nothing else.
     `,
-  model: "google/gemini-2.5-pro",
-  tools: { analysisTool },
-  memory: new Memory({
-    storage: new LibSQLStore({
-      url: "file:../mastra.db",
+    model: "google/gemini-2.5-pro",
+    tools: { analysisTool },
+    memory: new Memory({
+        storage: new LibSQLStore({
+            url: "file:../mastra.db",
+        }),
     }),
-  }),
-});   
+});

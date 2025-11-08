@@ -1,26 +1,18 @@
-import dotenv from "dotenv"
+import dotenv from "dotenv";
 dotenv.config();
-
-import express, { NextFunction, Request } from 'express';
-import cors from 'cors'
-import helmet from 'helmet'
-import rateLimit from 'express-rate-limit'
-import compression from 'compression'
-import morgan from 'morgan'
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+import compression from 'compression';
+import morgan from 'morgan';
 import router from './routes/click-safe.routes.js';
-
-
-
-
-
 const app = express();
 const PORT = process.env.PORT || 3000;
-
 // Security middleware
 app.use(helmet({
     crossOriginResourcePolicy: { policy: "cross-origin" }
 }));
-
 // Rate limiting
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
@@ -30,21 +22,16 @@ const limiter = rateLimit({
     }
 });
 app.use(limiter);
-
-
 app.use(compression());
 app.use(morgan('combined'));
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
-
-
 app.get("/", (req, res) => {
-    res.send("<h2> hello world</h2>")
-})
+    res.send("<h2> hello world</h2>");
+});
 // Routes
 app.use('/api/v1', router);
-
 // Health check endpoint
 app.get('/api/v1/health', (req, res) => {
     res.json({
@@ -55,7 +42,6 @@ app.get('/api/v1/health', (req, res) => {
         version: '1.0.0'
     });
 });
-
 // 404 handler
 app.use('*', (req, res) => {
     res.status(404).json({
@@ -63,11 +49,8 @@ app.use('*', (req, res) => {
         error: `Route ${req.originalUrl} not found`
     });
 });
-
-
-app.use((err: any, req: Request, res: any, next: NextFunction) => {
+app.use((err, req, res, next) => {
     console.error('Global error handler:', err);
-
     res.status(500).json({
         success: false,
         error: process.env.NODE_ENV === 'production'
@@ -75,10 +58,7 @@ app.use((err: any, req: Request, res: any, next: NextFunction) => {
             : err.message
     });
 });
-
 // Start server
 app.listen(PORT, () => {
     console.log(` Click-Safe Backend running on port ${PORT}`);
-
 });
-

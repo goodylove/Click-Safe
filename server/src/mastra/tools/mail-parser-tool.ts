@@ -1,6 +1,6 @@
 import { createTool } from "@mastra/core/tools";
 import { simpleParser } from "mailparser";
-import { whois } from "../../../config/config";
+import { whois } from "../../config/config"
 
 import z from "zod";
 
