@@ -75,13 +75,9 @@ app.use((err: any, req: Request, res: any, next: NextFunction) => {
     });
 });
 
-// Start server
-// Change this:
-app.listen(PORT, () => {
-    console.log(` Click-Safe Backend running on port ${PORT}`);
-});
 
-// To this:
+
+
 if (process.env.NODE_ENV !== 'production') {
     app.listen(PORT, () => {
         console.log(` Click-Safe Backend running on port ${PORT}`);
