@@ -11,6 +11,9 @@ export const mastra = new Mastra({
         // stores observability, scores, ... into memory storage, if it needs to persist, change to file:../mastra.db
         url: ":memory:",
     }),
+    bundler: {
+        externals: ["@whoisjson/whoisjson"],
+    },
 
     telemetry: {
         // Telemetry is deprecated and will be removed in the Nov 4th release
