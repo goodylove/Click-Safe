@@ -1,10 +1,11 @@
 import { Mastra } from "@mastra/core";
 import { clickSafeAgent } from "./agent/clickSafeAgent";
 import { LibSQLStore } from "@mastra/libsql";
+import { clickSafeRoute } from "../routes/click-safe.routes";
 
 export const mastra = new Mastra({
     server: {
-        apiRoutes: []
+        apiRoutes: [clickSafeRoute]
     },
     agents: { clickSafeAgent },
     storage: new LibSQLStore({
