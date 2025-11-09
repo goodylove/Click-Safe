@@ -186,9 +186,7 @@ export default function PopupContent() {
   const colors = analysis ? getVerdictColor(analysis.verdict) : getVerdictColor("")
 
   return (
-    <div style={{
-      height: '1000px'
-    }} className="w-96 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-slate-100 max-h-screen font-sans flex flex-col">
+   <div className="w-96 h-[600px] bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-slate-100 font-sans flex flex-col overflow-hidden">
       <div className="px-5 py-4 border-b border-slate-800/50 bg-slate-950/50 backdrop-blur-sm">
         <div className="flex items-center justify-between">
           <div className="">
