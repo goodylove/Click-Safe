@@ -14,7 +14,7 @@ import router from './routes/click-safe.routes.js';
 
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 
 // Security middleware
 app.use(helmet({
@@ -30,7 +30,6 @@ const limiter = rateLimit({
     }
 });
 app.use(limiter);
-
 
 app.use(compression());
 app.use(morgan('combined'));
@@ -76,9 +75,13 @@ app.use((err: any, req: Request, res: any, next: NextFunction) => {
     });
 });
 
-// Start server
-app.listen(PORT, () => {
-    console.log(` Click-Safe Backend running on port ${PORT}`);
 
-});
 
+
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+        console.log(` Click-Safe Backend running on port ${PORT}`);
+    });
+}
+
+export default app;
