@@ -1,50 +1,69 @@
-import express from "express";
 import { clickSafeAgent } from "../mastra/agent/clickSafeAgent.js";
+import { registerApiRoute } from "@mastra/core/server";
 
-
-
-
-const router = express.Router();
-
-router.post("/analyze-email", async (req, res) => {
+export const clickSafeRoute = registerApiRoute("/analyze-email", {
+  method: "POST",
+  handler: async ({ req }) => {
     try {
-        const { emailData } = req.body;
+      const body = await req.json();
 
-        if (!emailData) {
-            return res.status(400).json({ error: "Missing emailData in request body." });
-        }
+      if (!body.emailData) {
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: "Missing emailData in request body.",
+          }),
+          {
+            status: 400,
+            headers: { "Content-Type": "application/json" },
+          },
+        );
+      }
 
-        const formattedInput = `
+      const email = body.emailData;
+
+      const formattedInput = `
 Analyze this email for phishing or fake content.
 
-Subject: ${emailData.metadata?.subject}
-Sender: ${emailData.metadata?.sender?.name} <${emailData.metadata?.sender?.email}>
- Domain: ${emailData.metadata?.sender?.domain}
- Links: ${emailData.links?.map((l: any) => `${l.text}: ${l.href}`).join("\n")}
+Subject: ${email.metadata?.subject || "No subject"}
+Sender: ${email.metadata?.sender?.name || "Unknown"} <${email.metadata?.sender?.email || "unknown@email.com"}>
+Domain: ${email.metadata?.sender?.domain || "Unknown domain"}
+Links: ${email.links?.map((l: any) => `${l.text}: ${l.href}`).join("\n") || "No links"}
 ---
- ${emailData.content}
- `;
+${email.content}
+`;
 
-        // Run your Mastra agent
-        const { text } = await clickSafeAgent.generate([
-            { role: "user", content: formattedInput },
+      const { text } = await clickSafeAgent.generate([
+        { role: "user", content: formattedInput },
+      ]);
 
-        ]);
+      
+      return new Response(
+        JSON.stringify({
+          success: true,
+          analysis: text,
+          timestamp: new Date().toISOString(),
+        }),
+        {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+    } catch (err) {
+      console.error("Error analyzing email:", err);
 
-
-
-        return res.status(200).json({
-            success: true,
-            analysis: text
-        });
-    } catch (err: any) {
-        console.error(" Error analyzing email:", err);
-        return res.status(500).json({
-            success: false,
-            message: "Internal server error",
-            error: err.message,
-        });
+     
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "Internal server error",
+          message: err instanceof Error ? err.message : "Unknown error",
+        }),
+        {
+          status: 500,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
     }
+  },
 });
-
-export default router
