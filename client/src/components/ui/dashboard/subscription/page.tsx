@@ -54,7 +54,7 @@ export default function SubscriptionPage() {
   ]
 
   return (
-    <div className="p-6 space-y-6 bg-background min-h-screen font-satoshi">
+    <div className="p-6 space-y-6 bg-sidebar-bg min-h-screen font-satoshi">
       {/* Header */}
       <div className="bg-sidebar-sm rounded-lg border border-gray-200 p-6">
         <h1 className="text-2xl font-bold text-white">Subscription & Billing</h1>
@@ -62,20 +62,20 @@ export default function SubscriptionPage() {
       </div>
 
       {/* Current Plan Card */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
+      <div className="bg-brwn border border-gray-100 rounded-lg p-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <span className="text-sm text-gray-600">Current Plan</span>
+              <span className="text-sm text-gray-200">Current Plan</span>
               <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded">
                 Active
               </span>
             </div>
-            <p className="text-xl font-bold text-gray-900">Pro Plan</p>
-            <p className="text-gray-600 text-sm mt-1">$9/month • Next billing: April 11, 2025</p>
+            <p className="text-xl font-bold text-gray-100">Pro Plan</p>
+            <p className="text-gray-400 text-sm mt-1">$9/month • Next billing: April 11, 2025</p>
           </div>
           <div className="flex gap-3">
-            <button className="px-4 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded hover:bg-gray-50 transition-colors flex items-center gap-2">
+            <button className="px-4 py-2 border border-gray-300 text-gray-300 text-sm font-medium rounded hover:bg-gray-50 transition-colors flex items-center gap-2">
               <CreditCard className="w-4 h-4" />
               Update Payment
             </button>
@@ -91,7 +91,7 @@ export default function SubscriptionPage() {
         {plans.map((plan) => (
           <div
             key={plan.name}
-            className={`bg-white border rounded-lg p-6 transition-all ${
+            className={`bg-sidebar-bg border rounded-lg p-6 transition-all ${
               plan.current
                 ? "border-default ring-2 ring-blue-100"
                 : plan.popular
@@ -102,10 +102,10 @@ export default function SubscriptionPage() {
             {/* Plan Header */}
             <div className="flex justify-between items-start mb-4">
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">{plan.name}</h3>
+                <h3 className="text-lg font-semibold text-gray-200">{plan.name}</h3>
                 <div className="flex items-baseline gap-1 mt-2">
-                  <span className="text-2xl font-bold text-gray-900">{plan.price}</span>
-                  <span className="text-gray-600 text-sm">{plan.period}</span>
+                  <span className="text-2xl font-bold text-gray-200">{plan.price}</span>
+                  <span className="text-gray-200 text-sm">{plan.period}</span>
                 </div>
               </div>
               {plan.current && (
@@ -123,7 +123,7 @@ export default function SubscriptionPage() {
             {/* Features List */}
             <ul className="space-y-3 mb-6">
               {plan.features.map((feature, idx) => (
-                <li key={idx} className="flex items-start gap-3 text-gray-600 text-sm">
+                <li key={idx} className="flex items-start gap-3 text-gray-200 text-sm">
                   <Check className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
                   <span>{feature}</span>
                 </li>
@@ -148,10 +148,10 @@ export default function SubscriptionPage() {
       </div>
 
       {/* Billing History */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
+      <div className="bg-sidebar-bg border border-gray-600 rounded-lg p-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-900">Billing History</h3>
-          <button className="flex items-center gap-2 px-3 py-2 border border-gray-300 text-gray-700 text-sm rounded hover:bg-gray-50 transition-colors">
+          <h3 className="text-lg font-semibold text-gray-300">Billing History</h3>
+          <button className="flex items-center gap-2 px-3 py-2 border border-gray-300 text-gray-300 text-sm rounded hover:bg-gray-50 transition-colors">
             <Download className="w-4 h-4" />
             Export CSV
           </button>
@@ -161,23 +161,23 @@ export default function SubscriptionPage() {
           {billingHistory.map((item) => (
             <div
               key={item.id}
-              className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+              className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 border border-gray-200 rounded-lg  transition-colors"
             >
               <div className="flex items-start gap-3 mb-2 sm:mb-0">
                 <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
                   <Calendar className="w-5 h-5 text-gray-600" />
                 </div>
                 <div>
-                  <p className="text-gray-900 font-medium">{item.description}</p>
+                  <p className="text-gray-200 font-medium">{item.description}</p>
                   <div className="flex items-center gap-2 mt-1">
-                    <span className="text-gray-500 text-sm">{item.date}</span>
+                    <span className="text-gray-200 text-sm">{item.date}</span>
                     <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
                     <span className="text-green-600 text-sm font-medium">{item.status}</span>
                   </div>
                 </div>
               </div>
               <div className="flex items-center gap-4">
-                <span className="text-gray-900 font-semibold">{item.amount}</span>
+                <span className="text-gray-200 font-semibold">{item.amount}</span>
                 <button className="text-default hover:text-main text-sm font-medium">
                   View Receipt
                 </button>
@@ -195,16 +195,16 @@ export default function SubscriptionPage() {
       </div>
 
       {/* Help Section */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+      <div className="bg-blue-20 border border-blue-200 rounded-lg p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-2">Need Help with Your Subscription?</h3>
-        <p className="text-gray-600 text-sm mb-4">
+        <p className="text-gray-100 text-sm mb-4">
           Have questions about billing or want to change your plan? Our support team is here to help.
         </p>
         <div className="flex gap-3">
           <button className="px-4 py-2 bg-default text-white text-sm font-medium rounded hover:bg-main transition-colors">
             Contact Support
           </button>
-          <button className="px-4 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded hover:bg-gray-50 transition-colors">
+          <button className="px-4 py-2 border border-gray-400 text-gray-50 text-sm font-medium rounded hover:bg-gray-50 transition-colors">
             View FAQ
           </button>
         </div>

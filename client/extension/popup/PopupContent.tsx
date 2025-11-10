@@ -90,6 +90,7 @@ export default function PopupContent() {
   }, []);
   
 
+  // ——————————————————— Inject Content Script ———————————————————
   const ensureContentScript = async (tabId: number) => {
     return chrome.scripting.executeScript({
       target: { tabId, allFrames: false },
@@ -97,29 +98,31 @@ export default function PopupContent() {
     });
   };
 
-  const extractTabContent = async (tabId: number): Promise<any> => {
-    const MAX_ATTEMPTS = 20;
-    const DELAY_MS = 350;
+  // ——————————————————— Extract & Filter ———————————————————
+const extractTabContent = async (tabId: number): Promise<any> => {
+  const MAX_ATTEMPTS = 20;
+  const DELAY_MS = 350;
 
-    for (let i = 0; i < MAX_ATTEMPTS; i++) {
-      const response = await new Promise<any>((resolve) => {
-        chrome.tabs.sendMessage(
-          tabId,
-          { action: "SCAN_EMAIL" },
-          (resp: any) => resolve(chrome.runtime.lastError ? null : resp)
-        );
-      });
+  for (let i = 0; i < MAX_ATTEMPTS; i++) {
+    const response = await new Promise<any>((resolve) => {
+      chrome.tabs.sendMessage(
+        tabId,
+        { action: "SCAN_EMAIL", fresh: Date.now() }, // <-- add timestamp
+        (resp: any) => resolve(chrome.runtime.lastError ? null : resp)
+      );
+    });
 
-      if (response?.data) return filterEssentialData(response.data);
+    if (response?.data) return filterEssentialData(response.data);
 
-      if (chrome.runtime.lastError?.message?.includes("Receiving end does not exist")) {
-        await ensureContentScript(tabId);
-      }
-
-      await new Promise((r) => setTimeout(r, DELAY_MS));
+    if (chrome.runtime.lastError?.message?.includes("Receiving end does not exist")) {
+      await ensureContentScript(tabId);
     }
-    throw new Error("Cannot access page content. Make sure you are on Gmail, Outlook, or a supported page.");
-  };
+
+    await new Promise((r) => setTimeout(r, DELAY_MS));
+  }
+  throw new Error("Cannot access page content. Make sure you are on Gmail, Outlook, or a supported page.");
+};
+
 
   const filterEssentialData = (data: any) => {
     const clean = data.content?.replace(/[͏­]/g, "").replace(/\s+/g, " ").trim() || "";
@@ -133,8 +136,8 @@ export default function PopupContent() {
     return { ...data, content: clean, links };
   };
 
-
-const sendToBackend = async (content: any): Promise<Analysis> => {
+  // ——————————————————— Send to Backend + Parse ———————————————————
+ const sendToBackend = async (content: any): Promise<Analysis> => {
   const res = await fetch("http://localhost:4111/analyze-email", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -146,20 +149,10 @@ const sendToBackend = async (content: any): Promise<Analysis> => {
   const raw = await res.json();
   if (!raw.success || !raw.analysis) throw new Error("Invalid backend response");
 
-  let jsonString = raw.analysis as string;
-  if (jsonString.startsWith("json\n")) jsonString = jsonString.slice(5);
-  jsonString = jsonString.trim();
+  const parsed: BackendAnalysis = raw.analysis;
 
-  let parsed: BackendAnalysis;
-  try {
-    parsed = JSON.parse(jsonString);
-  } catch (e) {
-    console.error("JSON parse error – raw string:", jsonString);
-    throw new Error("Failed to parse analysis JSON");
-  }
-
-  const riskMap = { LOW: "SAFE", MEDIUM: "SUSPICIOUS", HIGH: "MALICIOUS" } as const;
-  const confMap = { LOW: 30, MEDIUM: 70, HIGH: 95 } as const;
+  const riskMap = { LOW: "SAFE", MEDIUM: "SUSPICIOUS", HIGH: "MALICIOUS" };
+  const confMap = { LOW: 30, MEDIUM: 70, HIGH: 95 };
 
   return {
     riskScore: confMap[parsed.confidence],
@@ -174,6 +167,8 @@ const sendToBackend = async (content: any): Promise<Analysis> => {
     safeToClick: parsed.safeToClick,
   };
 };
+
+
   // ——————————————————— Store History ———————————————————
   const storeResults = (analysis: Analysis) => {
     chrome.storage.local.get(["scanHistory"], (result: any) => {
@@ -198,9 +193,10 @@ const sendToBackend = async (content: any): Promise<Analysis> => {
       console.log(content);
       
       const result = await sendToBackend(content);
-      console.log(result, 'result');
+      console.log(result, "resultttttttttt ");
       
       setAnalysis(result);
+      
       storeResults(result);
     } catch (err: any) {
       setError(err.message || "Scan failed");
@@ -209,6 +205,7 @@ const sendToBackend = async (content: any): Promise<Analysis> => {
     }
   };
 
+  // ——————————————————— UI Helpers ———————————————————
   const getVerdictStyle = (verdict: string) => {
     switch (verdict) {
       case "SAFE":
@@ -233,8 +230,10 @@ const sendToBackend = async (content: any): Promise<Analysis> => {
 
   const style = analysis ? getVerdictStyle(analysis.verdict) : getVerdictStyle("");
 
+  // ——————————————————— Render ———————————————————
   return (
     <div className="w-96 h-[600px] bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-slate-100 font-sans flex flex-col overflow-hidden">
+      {/* Header */}
       <div className="px-5 py-4 border-b border-slate-800/50 bg-slate-950/50 backdrop-blur-sm">
         <div className="flex items-center justify-between">
           <img src="/logo.png" alt="logo" className="h-8" />
@@ -252,6 +251,7 @@ const sendToBackend = async (content: any): Promise<Analysis> => {
       </div>
 
       <div className="flex-1 overflow-y-auto p-5 space-y-5">
+        {/* Initial */}
         {!analysis && !scanning && !error && (
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
             <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-5">
@@ -317,6 +317,7 @@ const sendToBackend = async (content: any): Promise<Analysis> => {
                 </div>
               </div>
 
+              {/* Confidence Bar */}
               <div className="h-2 bg-slate-800/50 rounded-full overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
@@ -362,6 +363,7 @@ const sendToBackend = async (content: any): Promise<Analysis> => {
               </div>
             )}
 
+            {/* Links */}
             {analysis.links.length > 0 && (
               <div className="space-y-2">
                 <h3 className="text-xs font-bold text-cyan-400 uppercase tracking-wider">Suspicious Links</h3>
