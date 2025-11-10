@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { HiMenu, HiX } from "react-icons/hi";
+import { Link } from "react-router-dom";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -17,9 +18,9 @@ export default function Navbar() {
         </div>
 
         <div className="hidden md:flex items-center space-x-6">
-          <button className=" cursor-pointer px-8 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-cyan-500/50 transition-all duration-300 transform hover:scale-105">
+          <Link to={'/docs'} className=" cursor-pointer px-8 py-3 bg-linear-to-r from-cyan-500 to-blue-500 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-cyan-500/50 transition-all duration-300 transform hover:scale-105">
             Start Free Trial
-          </button>
+          </Link>
         </div>
 
         <div className="md:hidden flex items-center">
@@ -38,9 +39,9 @@ export default function Navbar() {
 
       {isOpen && (
         <div className="md:hidden px-6 pt-4 pb-6 flex flex-col space-y-4 bg-black shadow-md">
-          <button className=" px-8 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-cyan-500/50 transition-all duration-300 transform hover:scale-105">
+          <Link to="/docs" className=" px-8 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-cyan-500/50 transition-all duration-300 transform hover:scale-105">
             Start Free Trial
-          </button>
+          </Link>
         </div>
       )}
     </nav>
