@@ -14,10 +14,17 @@ export default function DashboardLayout() {
     { label: "Account", path: "/dashboard/account" },
   ];
 
+  const handleLinkClick = () => {
+    // Close sidebar on mobile when a link is clicked
+    if (window.innerWidth < 768) { // md breakpoint
+      setIsOpen(false);
+    }
+  };
+
   return (
     <div className="flex min-h-screen text-sm bg-black font-satoshi">
       <aside
-        className={`fixed top-0 left-0 h-screen  w-64 bg-linear-to-b from-sidebar-sm to-sidebar-bg flex flex-col justify-between p-5 transition-transform duration-300 z-50
+        className={`fixed top-0 left-0 h-screen w-64 bg-linear-to-b from-sidebar-sm to-sidebar-bg flex flex-col justify-between p-5 transition-transform duration-300 z-50
           ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}
       >
         <div className="flex items-center gap-2 mb-8 shrink-0">
@@ -29,6 +36,7 @@ export default function DashboardLayout() {
             <NavLink
               key={i}
               to={item.path}
+              onClick={handleLinkClick}
               className={({ isActive }) =>
                 `text-left px-3 py-2 rounded-lg transition-all duration-200 text-text-sm hover:bg-sidebar-sm hover:text-white shrink-0 ${
                   isActive ? "bg-black text-white" : ""
@@ -41,10 +49,27 @@ export default function DashboardLayout() {
         </nav>
 
         <div className="border-t border-[rgba(255,255,255,0.1)] pt-4 mt-4 text-sm text-text-sm shrink-0">
-          <p className="cursor-pointer hover:text-white transition">Settings</p>
-          <p className="cursor-pointer hover:text-white transition">Account</p>
+          <p 
+            className="cursor-pointer hover:text-white transition"
+            onClick={handleLinkClick}
+          >
+            Settings
+          </p>
+          <p 
+            className="cursor-pointer hover:text-white transition"
+            onClick={handleLinkClick}
+          >
+            Account
+          </p>
         </div>
       </aside>
+
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
 
       <button
         onClick={() => setIsOpen(!isOpen)}
@@ -79,7 +104,7 @@ export default function DashboardLayout() {
         )}
       </button>
 
-      <main className="flex-1 p-6 md:p-8 overflow-y-auto bg-black min-h-screen ml-0 md:ml-64 transition-all duration-300">
+      <main className="flex-1 sm:py-4 md:p-8 overflow-y-auto bg-black min-h-screen ml-0 md:ml-64 transition-all duration-300">
         <Outlet />
       </main>
     </div>

@@ -54,14 +54,12 @@ export default function SubscriptionPage() {
   ]
 
   return (
-    <div className="p-6 space-y-6 bg-sidebar-bg min-h-screen font-satoshi">
-      {/* Header */}
+    <div className="md:p-6 p-2 py-10  space-y-6 bg-sidebar-bg min-h-screen font-satoshi">
       <div className="bg-sidebar-sm rounded-lg border border-gray-200 p-6">
         <h1 className="text-2xl font-bold text-white">Subscription & Billing</h1>
         <p className="text-text-sm mt-1">Manage your plan and view billing history</p>
       </div>
 
-      {/* Current Plan Card */}
       <div className="bg-brwn border border-gray-100 rounded-lg p-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>

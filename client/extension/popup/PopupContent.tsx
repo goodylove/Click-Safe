@@ -138,7 +138,7 @@ const extractTabContent = async (tabId: number): Promise<any> => {
 
   // ——————————————————— Send to Backend + Parse ———————————————————
  const sendToBackend = async (content: any): Promise<Analysis> => {
-  const res = await fetch("http://localhost:4111/analyze-email", {
+  const res = await fetch("https://old-young-midnight.mastra.cloud/analyze-email", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ emailData: content }),

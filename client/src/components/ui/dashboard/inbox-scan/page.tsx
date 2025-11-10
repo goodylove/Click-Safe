@@ -23,7 +23,7 @@ export default function InboxScanPage() {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="md:p-6 p-2 py-10 space-y-6">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-slate-50">Inbox Scan</h1>
@@ -34,7 +34,6 @@ export default function InboxScanPage() {
         </button>
       </div>
 
-      {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="bg-brwn border border-zinc-800 rounded-lg p-6">
           <div className="text-slate-400 text-sm font-medium">Total Emails</div>

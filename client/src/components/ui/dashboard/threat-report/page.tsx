@@ -65,7 +65,7 @@ export default function ThreatReportPage() {
   };
 
   return (
-    <div className="p-6 space-y-6  min-h-screen">
+    <div className="md:p-6 p-2 py-10  space-y-6  min-h-screen">
       <div className="bg-brwn rounded-lg border border-zinc-700 p-6">
         <h1 className="text-2xl font-bold text-white">Threat Report</h1>
         <p className="text-gray-100 mt-1">
