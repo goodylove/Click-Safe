@@ -260,33 +260,37 @@
     return payload;
   };
 
-  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request?.action !== "SCAN_EMAIL") return false;
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request?.action !== "SCAN_EMAIL") return false;
 
-    try {
-      const payload = buildPayload();
-      sendResponse({ data: structuredClone(payload) });
-    } catch (e: Error | any) {
-      sendResponse({
-        data: {
-          type: "FALLBACK_CONTENT",
-          content: "",
-          html: "",
-          confidence: "LOW",
-          contentLength: 0,
-          hasUsefulContent: false,
-          links: [],
-          metadata: { sender: null, subject: "", timestamp: "" },
-          url: window.location.href,
-          source: "ERROR",
-          extractionMethod: "CRASH",
-          qualityScore: 0,
-          extractionErrors: ["runtime_crash", e?.message || ""],
-        },
-      });
-    }
-    return true;
-  });
+  try {
+    // Just call buildPayload() without arguments
+    // Ensure buildPayload() always queries the DOM fresh internally
+    const payload = buildPayload();
+    sendResponse({ data: structuredClone(payload) });
+  } catch (e: Error | any) {
+    sendResponse({
+      data: {
+        type: "FALLBACK_CONTENT",
+        content: "",
+        html: "",
+        confidence: "LOW",
+        contentLength: 0,
+        hasUsefulContent: false,
+        links: [],
+        metadata: { sender: null, subject: "", timestamp: "" },
+        url: window.location.href,
+        source: "ERROR",
+        extractionMethod: "CRASH",
+        qualityScore: 0,
+        extractionErrors: ["runtime_crash", e?.message || ""],
+      },
+    });
+  }
+
+  return true;
+});
+
 
   let settled = false;
   const settle = () => {

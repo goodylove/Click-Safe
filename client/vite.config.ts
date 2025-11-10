@@ -1,10 +1,9 @@
-// vite.config.ts
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 import { writeFileSync } from 'fs';
 import tailwindcss from '@tailwindcss/vite';
-// vite.config.ts  →  copy-manifest plugin
+
 const manifest = {
   manifest_version: 3,
   name: "ClickSafe - AI Phishing Detector",
@@ -15,13 +14,14 @@ const manifest = {
     "48": "icons/favicon.ico",
     "180": "icons/icon-180.png"
   },
-  action: {
-    default_popup: "extension/popup/popup.html",
-    default_icon: {
-      "16": "icons/icon-16x16.png",
-      "48": "icons/favicon.ico"
-    }
-  },
+ "action": {
+  "default_popup": "extension/popup/popup.html",
+  "default_icon": {
+    "16": "icons/icon-16x16.png",
+    "48": "icons/icon-48x48.png",
+  }
+}
+,
   background: {
     service_worker: "background.js"
   },

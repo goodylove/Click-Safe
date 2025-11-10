@@ -162,12 +162,12 @@ Remember: Your analysis protects users from financial loss, data theft, and secu
 
 Return ONLY the raw JSON object that can be directly parsed. No markdown, no code blocks, no additional text.
 
-### ✅ THIS IS THE EXACT FORMAT YOU MUST RETURN:
+### THIS IS THE EXACT FORMAT YOU MUST RETURN:
 {
   "overallRisk": "HIGH",
   "safeToClick": false,
   "confidence": "HIGH",
-  "summary": "🚨 DANGER: This is a phishing scam. The link is malicious, the sender is fake, and it uses urgent language to trick you.",
+  "summary": " DANGER: This is a phishing scam. The link is malicious, the sender is fake, and it uses urgent language to trick you.",
   "recommendations": [
     {
       "priority": "CRITICAL",
@@ -227,12 +227,13 @@ Return ONLY the raw JSON object that can be directly parsed. No markdown, no cod
   }
 }
 
-### ❌ NEVER DO THESE:
+###  NEVER DO THESE:
 - NO \`\`\`json
 - NO code blocks
 - NO markdown
 - NO additional text
 - NO string wrapping
+- No emojis 
 
 ### 🔧 ADAPT BASED ON ACTUAL ANALYSIS:
 While the structure must be exact, update the specific values based on your actual analysis:

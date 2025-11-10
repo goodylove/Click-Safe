@@ -16,7 +16,7 @@ export const clickSafeRoute = registerApiRoute("/analyze-email", {
           {
             status: 400,
             headers: { "Content-Type": "application/json" },
-          },
+          }
         );
       }
 
@@ -36,24 +36,37 @@ ${email.content}
       const { text } = await clickSafeAgent.generate([
         { role: "user", content: formattedInput },
       ]);
-console.log(text, "----------");
 
-      
+      let cleanedText = text.trim();
+
+      if (cleanedText.startsWith("```")) {
+        cleanedText = cleanedText
+          .replace(/^```(json)?/, "")
+          .replace(/```$/, "")
+          .trim();
+      }
+
+      let parsedResponse;
+      try {
+        parsedResponse = JSON.parse(cleanedText);
+      } catch (error) {
+        parsedResponse = { error: "Invalid JSON response from model" };
+      }
+
       return new Response(
         JSON.stringify({
           success: true,
-          analysis: text,
+          analysis: parsedResponse,
           timestamp: new Date().toISOString(),
         }),
         {
           status: 200,
           headers: { "Content-Type": "application/json" },
-        },
+        }
       );
     } catch (err) {
       console.error("Error analyzing email:", err);
 
-     
       return new Response(
         JSON.stringify({
           success: false,
@@ -63,7 +76,7 @@ console.log(text, "----------");
         {
           status: 500,
           headers: { "Content-Type": "application/json" },
-        },
+        }
       );
     }
   },
