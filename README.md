@@ -58,7 +58,6 @@ safe-click/
   * Content Pattern Detection
 * Returns a structured JSON risk report
 
-👉 [View Server README](./server/README.md) for setup details.
 
 ---
 
