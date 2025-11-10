@@ -158,8 +158,8 @@ safe-click/
 ### 1️⃣ Clone the Repository
 
 ```bash
-git clone https://github.com/goodylove/Safe-click.git
-cd safe-click
+git clone https://github.com/goodylove/Click-Safe.git
+cd Click-Safe
 ```
 
 ### 2️⃣ Setup the Server
