@@ -19,7 +19,6 @@ const manifest = {
   "default_icon": {
     "16": "icons/icon-16x16.png",
     "48": "icons/icon-48x48.png",
-    "128": "icons/icon-128x128.png"
   }
 }
 ,
