@@ -4,7 +4,7 @@ import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 import { writeFileSync } from 'fs';
 import tailwindcss from '@tailwindcss/vite';
-
+// vite.config.ts  →  copy-manifest plugin
 const manifest = {
   manifest_version: 3,
   name: "ClickSafe - AI Phishing Detector",
@@ -16,8 +16,8 @@ const manifest = {
     "180": "icons/icon-180.png"
   },
   action: {
-    "default_popup": "extension/popup/popup.html",
-    "default_icon": {
+    default_popup: "extension/popup/popup.html",
+    default_icon: {
       "16": "icons/icon-16x16.png",
       "48": "icons/favicon.ico"
     }
@@ -27,20 +27,26 @@ const manifest = {
   },
   content_scripts: [
     {
-      matches: ["<all_urls>"],
-      js: ["content.js"]
+      matches: [
+        "https://mail.google.com/*",
+        "https://outlook.office.com/*",
+        "https://outlook.live.com/*",
+        "https://mail.yahoo.com/*"
+      ],
+      js: ["content.js"],
+      run_at: "document_idle",
+      all_frames: false
     }
   ],
-  permissions: ["storage", "activeTab", "scripting"],
-  host_permissions: ["<all_urls>"],
+  permissions: ["storage", "activeTab", "scripting", "tabs"],
+  host_permissions: ["https://wailing-young-van.mastra.cloud/*"],
   web_accessible_resources: [
     {
-      resources: ["assets/*", "icons/*"],
+      resources: ["assets/*", "icons/*", "logo.png"],
       matches: ["<all_urls>"]
     }
   ]
 };
-
 export default defineConfig({
   base: './',
   plugins: [

@@ -1,68 +1,141 @@
-import { useEffect, useState } from "react"
+
+import { useEffect, useState } from 'react';
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import { ArrowDown, Sparkles } from 'lucide-react';
 
 export default function Hero() {
-  const [isVisible, setIsVisible] = useState(false)
+  const [isVisible, setIsVisible] = useState(false);
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const smoothX = useSpring(mouseX, { stiffness: 300, damping: 30 });
+  const smoothY = useSpring(mouseY, { stiffness: 300, damping: 30 });
 
-  useEffect(() => {
-    setIsVisible(true)
-  }, [])
+  const orb1X = useTransform(smoothX, [-300, 300], [-80, 80]);
+  const orb1Y = useTransform(smoothY, [-300, 300], [-80, 80]);
+  const orb2X = useTransform(smoothX, [-300, 300], [100, -100]);
+  const orb2Y = useTransform(smoothY, [-300, 300], [120, -120]);
+
+  useEffect(() => setIsVisible(true), []);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    mouseX.set(e.clientX - rect.left - rect.width / 2);
+    mouseY.set(e.clientY - rect.top - rect.height / 2);
+  };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 pb-20 px-4">
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-cyan-500/20 rounded-full blur-3xl animate-pulse"></div>
-        <div
-          className="absolute bottom-20 right-10 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse"
-          style={{ animationDelay: "1s" }}
-        ></div>
-        <div
-          className="absolute top-1/2 left-1/2 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl animate-pulse"
-          style={{ animationDelay: "2s" }}
-        ></div>
-      </div>
+    <section
+      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950"
+      onMouseMove={handleMouseMove}
+    >
+      {/* ---------- Dynamic Orbs ---------- */}
+      <motion.div
+        className="absolute w-96 h-96 bg-gradient-to-r from-cyan-500/30 to-blue-600/20 rounded-full blur-3xl pointer-events-none"
+        style={{ x: orb1X, y: orb1Y, left: '20%', top: '10%' }}
+      />
+      <motion.div
+        className="absolute w-[28rem] h-[28rem] bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-full blur-3xl pointer-events-none"
+        style={{ x: orb2X, y: orb2Y, right: '15%', bottom: '15%' }}
+      />
 
-      <div className="relative z-10 max-w-4xl mx-auto text-center space-y-8 animate-fade-in">
-        <div
-          className={`inline-flex items-center gap-2 px-4 py-2 bg-slate-800/50 border border-cyan-500/30 rounded-full backdrop-blur-sm transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
-        >
-          <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
-          <span className="text-sm text-slate-300">AI-Powered Threat Detection</span>
-        </div>
+      {/* ---------- Grain Overlay ---------- */}
+      <div className="absolute inset-0 bg-grain opacity-40 pointer-events-none" />
 
-        <h1
-          className={`text-5xl md:text-7xl lg:text-8xl font-bold text-balance transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+      <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
+        {/* ----- Floating Badge ----- */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={isVisible ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
+          className="inline-flex items-center gap-3 px-5 py-2 mb-8 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full"
         >
-          <span className="bg-gradient-to-r from-cyan-300 via-blue-300 to-purple-300 bg-clip-text text-transparent">
+          <Sparkles className="w-4 h-4 text-cyan-400" />
+          <span className="text-sm font-medium text-cyan-300">AI-Powered Threat Detection</span>
+        </motion.div>
+
+        {/* ----- Headline ----- */}
+        <motion.h1
+          initial={{ opacity: 0, y: 30 }}
+          animate={isVisible ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
+          className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight"
+        >
+          <span className="block bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
             Secure Your
           </span>
-          <br />
-          <span className="text-white">Enterprise</span>
-        </h1>
+          <span className="block text-white mt-2">Enterprise</span>
+        </motion.h1>
 
-        <p
-          className={`text-lg md:text-xl text-slate-400 max-w-2xl mx-auto transition-all duration-700 delay-100 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+        {/* ----- Sub-copy ----- */}
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={isVisible ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8, delay: 0.2, ease: 'easeOut' }}
+          className="mt-6 text-lg md:text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed"
         >
-          Advanced email threat detection powered by AI. Stop phishing, malware, and business email compromise before
-          they reach your inbox.
-        </p>
+          Advanced email threat detection powered by AI. Stop phishing, malware, and business email
+          compromise <span className="text-cyan-400">before they reach your inbox.</span>
+        </motion.p>
 
-        <div
-          className={`flex gap-4 justify-center pt-4 transition-all duration-700 delay-200 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+        {/* ----- CTA Buttons ----- */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={isVisible ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8, delay: 0.4, ease: 'easeOut' }}
+          className="mt-10 flex flex-col sm:flex-row gap-4 justify-center"
         >
-          <button className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-cyan-500/50 transition-all duration-300 transform hover:scale-105">
-            Start Free Trial
-          </button>
-          <button className="px-8 py-4 border border-slate-600 text-slate-300 font-semibold rounded-lg hover:bg-slate-800/50 hover:border-cyan-500/50 transition-all duration-300">
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.98 }}
+            className="group relative px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold rounded-xl overflow-hidden shadow-xl"
+          >
+            <span className="relative z-10 flex items-center gap-2">
+              Start Free Trial
+              <ArrowDown className="w-4 h-4 group-hover:translate-y-1 transition-transform" />
+            </span>
+            <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+          </motion.button>
+
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.98 }}
+            className="px-8 py-4 border border-slate-600 text-slate-300 font-semibold rounded-xl backdrop-blur-sm hover:bg-white/5 hover:border-cyan-500/50 transition-all duration-300"
+          >
             Request Demo
-          </button>
-        </div>
+          </motion.button>
+        </motion.div>
+
+        {/* ----- Live Stat Badge ----- */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={isVisible ? { opacity: 1, scale: 1 } : {}}
+          transition={{ duration: 0.6, delay: 0.6 }}
+          className="mt-12 flex items-center justify-center gap-2 text-sm text-slate-400"
+        >
+          <div className="flex -space-x-2">
+            {[...Array(3)].map((_, i) => (
+              <div
+                key={i}
+                className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 border-2 border-slate-900"
+              />
+            ))}
+          </div>
+          <span>Used daily by 2000+ developers</span>
+        </motion.div>
       </div>
 
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-        <svg className="w-6 h-6 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-        </svg>
-      </div>
+      {/* ----- Scroll Hint ----- */}
+      <motion.div
+        animate={{ y: [0, 8, 0] }}
+        transition={{ repeat: Infinity, duration: 1.5, ease: 'easeInOut' }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2"
+      >
+        <ArrowDown className="w-6 h-6 text-slate-500" />
+      </motion.div>
     </section>
-  )
+  );
 }
+
+/* -------------------------------------------------
+   Tailwind custom utilities (add to globals.css)
+   ------------------------------------------------- */
