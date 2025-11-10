@@ -1,5 +1,4 @@
-Perfect — so now you want a **main project README** that gives an overview of the **entire ClickSafe ecosystem** (Chrome Extension + 
----
+
 
 # 🛡️ ClickSafe AI — Phishing Detection Ecosystem
 
