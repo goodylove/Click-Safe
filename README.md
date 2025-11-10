@@ -2,7 +2,7 @@
 
 # 🛡️ ClickSafe AI — Phishing Detection Ecosystem
 
-**ClickSafe AI** is a full-stack cybersecurity solution that detects phishing, scam, and malicious emails — especially in **FinTech**, **Healthcare**, and **Crypto** domains.
+**ClickSafe ** is a full-stack cybersecurity solution that detects phishing, scam, and malicious emails — especially in **FinTech**, **Healthcare**, and **Crypto** domains.
 
 It combines three main components working seamlessly together:
 
