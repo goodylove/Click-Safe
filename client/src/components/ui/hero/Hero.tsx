@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function Hero() {
   const [isVisible, setIsVisible] = useState(false);
@@ -46,9 +47,9 @@ export default function Hero() {
               modern businesses
             </p>
             <div className="w-full">
-              <button className="  cursor-pointer px-8 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-cyan-500/50 transition-all duration-300 transform hover:scale-105">
+              <Link to={'/docs'} className="  cursor-pointer px-8 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-cyan-500/50 transition-all duration-300 transform hover:scale-105">
                 Request For Demo
-              </button>
+              </Link>
             </div>
           </div>
         </div>

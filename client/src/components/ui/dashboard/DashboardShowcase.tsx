@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import dashboardImage from "../../../assets/dashboard.png";
 import { dashboardData } from "../../../constant/data";
+import { Link } from "react-router-dom";
 
 export default function DashboardShowcase() {
   const [isVisible, setIsVisible] = useState(false);
@@ -48,9 +49,9 @@ export default function DashboardShowcase() {
                 <p className="text-white font-semibold font-sans">
                   Experience Real-Time Protection
                 </p>
-                <button className="px-6 py-2 cursor-pointer bg-cyan-500 hover:bg-cyan-400 text-white font-medium rounded-lg transition-colors duration-300">
+                <Link to={'/dashboard/inbox-scan'} className="px-6 py-2 cursor-pointer bg-cyan-500 hover:bg-cyan-400 text-white font-medium rounded-lg transition-colors duration-300">
                   View Features
-                </button>
+                </Link>
               </div>
             </div>
           </div>

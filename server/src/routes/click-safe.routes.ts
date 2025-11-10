@@ -36,6 +36,7 @@ ${email.content}
       const { text } = await clickSafeAgent.generate([
         { role: "user", content: formattedInput },
       ]);
+console.log(text, "----------");
 
       
       return new Response(
